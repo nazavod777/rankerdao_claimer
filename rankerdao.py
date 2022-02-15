@@ -35,8 +35,8 @@ def claim_nft(wallet_data, contract):
 		transaction = contract.functions.mint().buildTransaction({
 			'gas': 148981,
 			'gasPrice': web3.toWei('5', 'gwei'),
-			'from': address,
-			'nonce': web3.eth.getTransactionCount(address)
+			'from': web3.toChecksumAddress(address.lower()),
+			'nonce': web3.eth.getTransactionCount(Web3.toChecksumAddress(web3.toChecksumAddress(address.lower())))
 			})
 
 		signed_txn = web3.eth.account.signTransaction(transaction, private_key=private_key)
@@ -58,16 +58,16 @@ def transfer_nft(wallet_data, main_wallet, contract):
 		private_key = wallet_data.split(':')[1]
 		address = wallet_data.split(':')[0]
 
-		balanceOf = contract.functions.balanceOf(address).call()
+		balanceOf = contract.functions.balanceOf(web3.toChecksumAddress(address.lower())).call()
 		if balanceOf >= 1:
 			for i in range(balanceOf):
-				current_token_id = int(contract.functions.tokenOfOwnerByIndex(address, i).call())
+				current_token_id = int(contract.functions.tokenOfOwnerByIndex(web3.toChecksumAddress(address.lower()), i).call())
 
-				transaction = contract.functions.transferFrom(address, main_wallet, current_token_id).buildTransaction({
+				transaction = contract.functions.transferFrom(web3.toChecksumAddress(address.lower()), main_wallet, current_token_id).buildTransaction({
 					'gas': 200000,
 					'gasPrice': web3.toWei('5', 'gwei'),
-					'from': address,
-					'nonce': web3.eth.getTransactionCount(address)
+					'from': web3.toChecksumAddress(address.lower()),
+					'nonce': web3.eth.getTransactionCount(Web3.toChecksumAddress(web3.toChecksumAddress(address.lower())))
 					})
 
 				signed_txn = web3.eth.account.signTransaction(transaction, private_key=private_key)
